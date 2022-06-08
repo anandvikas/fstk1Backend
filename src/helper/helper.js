@@ -6,8 +6,8 @@ const emailSend = (response, to, subject, html) => {
     host: "smtp.gmail.com",
     port: 587,
     auth: {
-      user: "projectonfloor@gmail.com",
-      pass: "ouzmkpqvzmrsobua",
+      user: process.env.SENDER_EMAIL,
+      pass: process.env.SENDER_EMAIL_PASS,
     },
   });
 
@@ -30,15 +30,12 @@ const emailSend = (response, to, subject, html) => {
 };
 
 const createToken = async (data) => {
-  const token = await jwt.sign(data, "abcdefghijklmnopqrstuvwxyzabcdef");
+  const token = await jwt.sign(data, process.env.JWT_KEY);
   return token;
 };
 
 const checkToken = async (token) => {
-  const varificationData = await jwt.verify(
-    token,
-    "abcdefghijklmnopqrstuvwxyzabcdef"
-  );
+  const varificationData = await jwt.verify(token, process.env.JWT_KEY);
   return varificationData;
 };
 module.exports = { emailSend, createToken, checkToken };

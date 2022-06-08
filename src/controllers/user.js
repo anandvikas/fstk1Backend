@@ -17,14 +17,12 @@ exports.login = async (request, response) => {
           userName: res.userName,
           _id: res._id,
         });
-        response
-          .status(200)
-          .send({
-            success: true,
-            userName: res.userName,
-            _id: res._id,
-            token: loginToken,
-          });
+        response.status(200).send({
+          success: true,
+          userName: res.userName,
+          _id: res._id,
+          token: loginToken,
+        });
       } else {
         response
           .status(200)
@@ -152,7 +150,7 @@ exports.sendResetPassLink = async (request, response) => {
     let to = body.email;
     let subject = "Reset password link";
     let linkToken = await createToken({ email: body.email });
-    let html = `<h3>follow the below link to reset the password</h3> <br> <a href="http://192.168.235.200:3700/resetpassword?token=${linkToken}&email=${body.email}" target="_blank">Reset password</a>`;
+    let html = `<h3>follow the below link to reset the password</h3> <br> <a href="${process.env.FRONTEND_URL}/resetpassword?token=${linkToken}&email=${body.email}" target="_blank">Reset password</a>`;
     emailSend(response, to, subject, html);
     response.status(200).send({
       success: true,

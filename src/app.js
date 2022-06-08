@@ -1,9 +1,13 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 app.use(express.json());
 app.use(cors());
 require("./connection/conn");
+
+const path = require("path");
+// app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 //importing routes -----------------------------------------------
 const adminRoutes = require("./routes/admin");

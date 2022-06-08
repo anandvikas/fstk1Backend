@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const path = `mongodb+srv://rakesh:System123@mtable.vbf4o.mongodb.net/vikasTable?retryWrites=true&w=majority`;
+const path = process.env.DB_PATH;
 mongoose
   .connect(path, {
     useNewUrlParser: true,
