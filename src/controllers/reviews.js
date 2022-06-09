@@ -1,4 +1,5 @@
 const Reviews = require("../models/reviews");
+const Food = require("../models/food")
 
 exports.reviews = async (request, response) => {
   const { body } = request;
@@ -34,6 +35,15 @@ exports.addReview = async (request, response) => {
       },
       { new: true }
     );
+
+    let ratingSum = 0;
+    for(let ele of res.reviews){
+      ratingSum += ele.rating
+    }
+    let calculatedAvgRating = ratingSum/res.reviews.length
+    console.log(calculatedAvgRating)
+
+    await Food.updateOne({_id:body.itemId},{$set:{avgRating:parseFloat(calculatedAvgRating.toFixed(2))}})
     response.status(200).send({
       success: true,
       message: "review added",

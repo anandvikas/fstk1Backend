@@ -1,6 +1,8 @@
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
-
+const multer = require("multer");
+const path = require("path");
+//---------------------------------------------------------------
 const emailSend = (response, to, subject, html) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -29,6 +31,7 @@ const emailSend = (response, to, subject, html) => {
   });
 };
 
+//---------------------------------------------------------------
 const createToken = async (data) => {
   const token = await jwt.sign(data, process.env.JWT_KEY);
   return token;
@@ -38,4 +41,19 @@ const checkToken = async (token) => {
   const varificationData = await jwt.verify(token, process.env.JWT_KEY);
   return varificationData;
 };
-module.exports = { emailSend, createToken, checkToken };
+
+//---------------------------------------------------------------
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    // console.log(req.body);
+    callback(null, path.join(__dirname, "../uploads/images"));
+  },
+  filename: (req, file, callback) => {
+    // console.log(file);
+    callback(null, `${new Date().getFullYear()}_${new Date().getMonth()}_${new Date().getDate()}_${new Date().getHours()}_${new Date().getMinutes()}_${file.originalname}`);
+  },
+});
+const upload = multer({ storage: storage });
+
+
+module.exports = { emailSend, createToken, checkToken, upload };

@@ -26,7 +26,7 @@ app.use(wishlistRoutes);
 app.use(reviewsRoutes);
 app.use(mediaRoutes);
 
-const PORT = 3500;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log("Listening to port " + PORT);
 });

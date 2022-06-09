@@ -21,6 +21,26 @@ const foodSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  images: [
+    {
+      src: {
+        type: String,
+        required: true,
+      },
+      alt: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  addedOn:{
+    type:Date,
+    default:Date.now
+  },
+  avgRating:{
+    type:Number,
+    default:5
+  }
 });
 const Food = new mongoose.model("Food", foodSchema);
 module.exports = Food;
