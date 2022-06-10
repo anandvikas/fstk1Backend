@@ -66,11 +66,16 @@ exports.get = async (request, reponse) => {
       }
     }
   }
+
+  let perPage = query.perPage ?? 5;
+  let page = query.page ?? 1;
   // console.log(query);
   
   try {
-    let res = await Food.find(findQuery).sort(sortQuery);
-    reponse.status(200).send(res);
+    let res = await Food.find(findQuery).sort(sortQuery).skip((page-1)*perPage).limit(perPage);
+    let count = await Food.count(findQuery)
+    console.log(count)
+    reponse.status(200).send({results:count,data:[...res]});
   } catch (error) {
     console.log(error)
     reponse.status(400).send(error);
