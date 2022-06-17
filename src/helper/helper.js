@@ -23,10 +23,10 @@ const emailSend = (response, to, subject, html) => {
   transporter.sendMail(mailOptions, async (err, info) => {
     if (err) {
       console.log(err);
-      response.status(200).send({
-        success: false,
-        message: "Cannot send the reset password link",
-      });
+      // response.status(200).send({
+      //   success: false,
+      //   message: "Cannot send the reset password link",
+      // });
     }
   });
 };

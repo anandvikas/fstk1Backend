@@ -1,16 +1,21 @@
 const Food = require("../models/food");
 const Reviews = require("../models/reviews");
+const NewsletterSubscriber = require("../models/newsletterSubscribers");
+const { emailSend } = require("../helper/helper");
 
 exports.add = async (request, response) => {
   const { body, file } = request;
   let ingredients = JSON.parse(body.ingredients)
   // console.log(file)
-  const food = new Food({...body,ingredients:ingredients , images:[
-    {
-      src:`http://192.168.235.200:${process.env.PORT}/image/${new Date().getFullYear()}_${new Date().getMonth()}_${new Date().getDate()}_${new Date().getHours()}_${new Date().getMinutes()}_${file.originalname}`,
-      alt:`${new Date().getFullYear()}_${new Date().getMonth()}_${new Date().getDate()}_${new Date().getHours()}_${new Date().getMinutes()}_${file.originalname}`
-    }
-  ]});
+  const food = new Food({
+    ...body, ingredients: ingredients, images: [
+      {
+        src: `http://192.168.235.200:${process.env.PORT}/image/${new Date().getFullYear()}_${new Date().getMonth()}_${new Date().getDate()}_${new Date().getHours()}_${new Date().getMinutes()}_${file.originalname}`,
+        alt: `${new Date().getFullYear()}_${new Date().getMonth()}_${new Date().getDate()}_${new Date().getHours()}_${new Date().getMinutes()}_${file.originalname}`
+      }
+    ]
+  });  
+
   try {
     let res = await food.save();
     let foodReviews = new Reviews({
@@ -18,6 +23,15 @@ exports.add = async (request, response) => {
       reviews: [],
     });
     await foodReviews.save();
+
+    let emailList = await NewsletterSubscriber.find()
+    for (let element of emailList) {
+      let to = element.emailAddress;
+      let subject = "New Food added";
+      let html = `<h3>New Food Added</h3> <br> <a href="${process.env.FRONTEND_URL}/food/${res._id}" target="_blank">See here</a>`;
+      emailSend(response, to, subject, html)
+    }
+
     response.status(200).send(res);
   } catch (error) {
     console.log(error)
@@ -31,37 +45,37 @@ exports.get = async (request, reponse) => {
   let findQuery = {}
   let sortQuery = {}
 
-  if(query.catagory){    
+  if (query.catagory) {
     findQuery.catagory = query.catagory
   }
 
-  if(query.sort){
-    switch(query.sort){
-      case 'addedOnDesc' : {
+  if (query.sort) {
+    switch (query.sort) {
+      case 'addedOnDesc': {
         sortQuery.addedOn = -1;
         break;
       }
-      case 'addedOnAsc' : {
+      case 'addedOnAsc': {
         sortQuery.addedOn = 1;
         break;
       }
-      case 'ratingDesc' : {
+      case 'ratingDesc': {
         sortQuery.avgRating = -1;
         break;
       }
-      case 'ratingAsc' : {
+      case 'ratingAsc': {
         sortQuery.avgRating = 1;
         break;
       }
-      case 'priceDesc' : {
+      case 'priceDesc': {
         sortQuery.price = -1;
         break;
       }
-      case 'priceAsc' : {
+      case 'priceAsc': {
         sortQuery.price = 1;
         break;
-      }      
-      default : {        
+      }
+      default: {
         break;
       }
     }
@@ -70,12 +84,12 @@ exports.get = async (request, reponse) => {
   let perPage = query.perPage ?? 5;
   let page = query.page ?? 1;
   // console.log(query);
-  
+
   try {
-    let res = await Food.find(findQuery).sort(sortQuery).skip((page-1)*perPage).limit(perPage);
+    let res = await Food.find(findQuery).sort(sortQuery).skip((page - 1) * perPage).limit(perPage);
     let count = await Food.count(findQuery)
     console.log(count)
-    reponse.status(200).send({results:count,data:[...res]});
+    reponse.status(200).send({ results: count, data: [...res] });
   } catch (error) {
     console.log(error)
     reponse.status(400).send(error);

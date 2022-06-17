@@ -16,7 +16,9 @@ const foodRoutes = require("./routes/food");
 const cartRoutes = require("./routes/cart");
 const wishlistRoutes = require("./routes/wishlist");
 const reviewsRoutes = require("./routes/reviews");
+const nlsRoutes = require("./routes/newsletterSubscribers")
 const mediaRoutes = require("./routes/media");
+const testRoutes = require("./routes/test");
 
 app.use(adminRoutes);
 app.use(userRoutes);
@@ -25,6 +27,8 @@ app.use(cartRoutes);
 app.use(wishlistRoutes);
 app.use(reviewsRoutes);
 app.use(mediaRoutes);
+app.use(testRoutes);
+app.use(nlsRoutes);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const UserData = require("../models/user");
 const Cart = require("../models/cart");
+const NewsletterSubscriber = require("../models/newsletterSubscribers");
+// const Test = require("../models/test");
 const Wishlist = require("../models/wishlist");
 const { emailSend, createToken, checkToken } = require("../helper/helper");
 
@@ -41,12 +43,9 @@ exports.login = async (request, response) => {
 exports.signup = async (request, response) => {
   let { body } = request;
   console.log(body);
-  try {
-    // const hashedPassword = await bcrypt.hash(body.password, 10);
+  try {    
     const data = new UserData({ ...body });
-
-    const res = await data.save();
-    // console.log(res);
+    const res = await data.save();    
     let cartData = new Cart({
       userId: res._id,
       items: [],
@@ -54,10 +53,16 @@ exports.signup = async (request, response) => {
     let wishlistData = new Wishlist({
       userId: res._id,
       items: [],
-    });
+    });    
+    
     await cartData.save();
-    await wishlistData.save();
+    await wishlistData.save();    
 
+    if(body.sendMail){
+      let subscriber = new NewsletterSubscriber({emailAddress:body.email})
+      await subscriber.save()
+    }
+    
     console.log(res);
     response.status(200).send({ userName: res.userName, _id: res._id });
   } catch (err) {

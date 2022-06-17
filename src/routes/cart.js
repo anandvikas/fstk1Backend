@@ -6,4 +6,5 @@ cartRoutes.post("/cart", cartControllers.cart);
 cartRoutes.post("/cart/addToCart", cartControllers.addToCart);
 cartRoutes.post("/cart/rmFromCart", cartControllers.rmFromCart);
 cartRoutes.post("/cart/changeCount", cartControllers.changeCount);
+cartRoutes.post("/cart/cartTotal", cartControllers.cartTotal);
 module.exports = cartRoutes;
